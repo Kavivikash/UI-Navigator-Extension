@@ -1,0 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+  min-width: 300px;
+  padding: 10px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input, button {
+  padding: 8px;
+  font-size: 14px;
+}
+
+pre {
+  white-space: pre-wrap;
+  background: #f4f4f4;
+  padding: 8px;
+  border-radius: 6px;
+}
