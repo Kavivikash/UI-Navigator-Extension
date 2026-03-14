@@ -26,13 +26,13 @@ async function runActionOnPage(actionData) {
           reject(chrome.runtime.lastError.message);
           return;
         }
-        resolve(response);
+        resolve(response || { status: "no_response" });
       },
     );
   });
 }
 
-async function callAgent(command, screenshot, step) {
+async function callAgent(command, screenshot, step, memory) {
   const response = await fetch("http://127.0.0.1:8000/agent", {
     method: "POST",
     headers: {
@@ -42,6 +42,7 @@ async function callAgent(command, screenshot, step) {
       command,
       screenshot,
       step,
+      memory,
     }),
   });
 
@@ -57,23 +58,51 @@ document.getElementById("sendBtn").addEventListener("click", async () => {
     return;
   }
 
+  const memory = { history: [] };
   resultBox.textContent = "Running agent loop...\n";
 
   try {
-    for (let step = 1; step <= 3; step++) {
+    for (let step = 1; step <= 5; step++) {
       const screenshot = await captureScreenshot();
-      const agentResult = await callAgent(command, screenshot, step);
+      const agentResult = await callAgent(command, screenshot, step, memory);
 
       resultBox.textContent += `\nStep ${step}:\n${JSON.stringify(agentResult, null, 2)}\n`;
 
-      await runActionOnPage(agentResult);
+      if (agentResult.error) {
+        resultBox.textContent += `\nAgent error: ${agentResult.error}`;
+        break;
+      }
 
-      if (agentResult.status === "completed") {
+      if (
+        agentResult.status === "completed" ||
+        agentResult.next_action?.type === "none"
+      ) {
         resultBox.textContent += "\nTask completed.";
         break;
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const executionResult = await runActionOnPage(agentResult);
+
+      resultBox.textContent += `Execution Result:\n${JSON.stringify(executionResult, null, 2)}\n`;
+
+      memory.history.push({
+        step,
+        action: agentResult.next_action,
+        screen_summary: agentResult.screen_summary || "",
+        result_summary: executionResult?.status || "executed",
+      });
+
+      if (
+        executionResult?.status === "clicked" ||
+        executionResult?.status === "typed" ||
+        executionResult?.status === "typed in contenteditable" ||
+        executionResult?.status === "scrolled"
+      ) {
+        resultBox.textContent += "\nTask completed.";
+        break;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1200));
     }
   } catch (error) {
     resultBox.textContent += `\nError: ${error}`;

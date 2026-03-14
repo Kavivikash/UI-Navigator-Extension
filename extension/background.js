@@ -3,6 +3,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
 
+      if (!activeTab?.id) {
+        sendResponse({ status: "error", error: "No active tab found" });
+        return;
+      }
+
       chrome.tabs.sendMessage(
         activeTab.id,
         {
@@ -10,7 +15,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           payload: message.payload,
         },
         (response) => {
-          sendResponse(response);
+          if (chrome.runtime.lastError) {
+            sendResponse({
+              status: "error",
+              error: chrome.runtime.lastError.message,
+            });
+            return;
+          }
+
+          sendResponse(response || { status: "no_response" });
         },
       );
     });
@@ -24,6 +37,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ error: chrome.runtime.lastError.message });
         return;
       }
+
       sendResponse({ screenshot: dataUrl });
     });
 
