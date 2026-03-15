@@ -1,16 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <title>UI Navigator</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="container">
-    <h2>UI Navigator Agent</h2>
-    <input type="text" id="commandInput" placeholder="Enter command" />
-    <button id="sendBtn">Send</button>
-    <pre id="result"></pre>
-  </div>
-  <script src="popup.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>UI Navigator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 12px;
+        width: 380px;
+        background: #f8fafc;
+        color: #111827;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      h2 {
+        margin: 0 0 4px 0;
+        font-size: 18px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 4px;
+      }
+
+      #commandInput {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+      }
+
+      #commandInput:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      #sendBtn {
+        padding: 10px 12px;
+        border: none;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      #sendBtn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      #result {
+        margin: 0;
+        padding: 10px;
+        height: 260px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .hint {
+        font-size: 11px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>UI Navigator Agent</h2>
+      <div class="subtitle">
+        Visual web navigation through screenshots + actions
+      </div>
+
+      <input
+        type="text"
+        id="commandInput"
+        placeholder="Try: search for siamese cats"
+      />
+
+      <button id="sendBtn">Run Agent</button>
+
+      <div class="hint">
+        Supports click, type, scroll, keypress, and multi-step tasks.
+      </div>
+
+      <pre id="result">Ready.</pre>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>

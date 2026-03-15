@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from app.agent import analyze_command
 
-app = FastAPI()
+app = FastAPI(title="UI Navigator Agent Backend")
 
 
 class ActionHistoryItem(BaseModel):
@@ -31,7 +31,7 @@ class AgentRequest(BaseModel):
 def read_root():
     return {
         "message": "UI Navigator Agent Backend Running",
-        "vertex_project": True,
+        "vertex_project_configured": True,
     }
 
 
